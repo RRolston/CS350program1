@@ -9,7 +9,7 @@
 #include<string.h>
 #include<time.h>
 
-#define PID_MAX 32768;//max on my personal system
+#define PID_MAX 32768//max on my personal system
 
 char* stringGen(const int len);
 void Start(int,int, FILE*);
@@ -38,7 +38,7 @@ const unsigned int MAX_SIZE = strtol(argv[2], &ptr, 10);
 const unsigned int COMMAND_SIZE = strtol(argv[3], &ptr, 10);
 int Pid[PID_MAX];//process IDs 1 or 0 for running or not running
 unsigned int address[PID_MAX];//address size of each process ID
-
+/*
 while(){
 
   switch(){
@@ -54,7 +54,7 @@ while(){
   }
 }
 
-
+*/
 
 fclose(oFile);
 //-----------------------------------------------------------
