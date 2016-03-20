@@ -10,7 +10,7 @@
 #include<string.h>
 #include<time.h>
 
-#define PID_MAX 32768//max on my personal system
+//#define PID_MAX 32768//max on my personal system
 
 void Start(unsigned int, unsigned int, FILE*);
 void Terminate(unsigned int, FILE*);
@@ -18,9 +18,9 @@ void Reference(unsigned int, unsigned int, FILE*);
 
 int main(int argc, char *argv[]) {
 //quick argument check-----------------------------------------
-  if(argc!=4){
+  if(argc!=4 && argc!=5){
     fprintf(stderr,"Unacceptable number of arguments %d encountered.", argc);
-    fprintf(stderr," ./lab4  <input-file> <max-address-size(bits)> <number-of-commands>");
+    fprintf(stderr," ./lab4  <input-file> <max-address-size(bits)> <number-of-commands> <max-processes(optional)>");
     exit(1);
   }
 //-----------------------------------------------------------
@@ -33,10 +33,20 @@ time_t t;
 FILE * oFile;
 oFile = fopen(argv[1],"w");
 char *ptr;
+unsigned int PID_MAX=32768;//max on my personal system
+if(argc==5){
+  PID_MAX = strtol(argv[4], &ptr, 10);
+}
 const unsigned int MAX_SIZE = strtol(argv[2], &ptr, 10);
 const unsigned int COMMAND_SIZE = strtol(argv[3], &ptr, 10);
-int Pid[PID_MAX]={0};//process IDs 1 or 0 for running or not running
-unsigned int Address[PID_MAX];//address size of each process ID
+//int Pid[PID_MAX]={0};//process IDs 1 or 0 for running or not running
+int* Pid = (int*) malloc(sizeof(unsigned int)*PID_MAX);
+unsigned int j;
+for (j = 0; j < PID_MAX; j++){
+  Pid[j] = 0;
+}
+unsigned int* Address = (unsigned int*) malloc(sizeof(unsigned int)*PID_MAX);
+//unsigned int Address[PID_MAX];//address size of each process ID
 unsigned int command_count=0;
 unsigned int processes=1;
 
