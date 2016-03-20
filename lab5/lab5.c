@@ -25,17 +25,25 @@ time_t t;
 //Print format-----------------------------------------------
 FILE * outputFile;
 outputFile = fopen(argv[2],"r");
-int process_number;
-int address_space_size;
-int virtual_page_number;
-  fscanf(outputFile, "START %d %d\n", process_number, address_space_size);
-  fscanf(outputFile, " %d\n", process_number, address_space_size);
-  fscanf(outputFile, "START %d %d\n", process_number,virtual_page_number);
-
+char *ptr;
+const unsigned int frames_of_memory = strtol(argv[1], &ptr, 10);
+unsigned long int FIFO_page_faults=0;
+unsigned int process_number;
+unsigned int address_space_size;
+unsigned int virtual_page_number;
+int z;//
+char command[10];
+while(1){
+  z= fscanf(outputFile, "%s ",command);
+  if( z == EOF ) break;
+  if(strcmp(command,"START")==0) fscanf(outputFile, "%u %u\n", &process_number, &address_space_size);
+  if(strcmp(command,"TERMINATE")==0) fscanf(outputFile, "%u\n", &process_number);
+  if(strcmp(command,"REFERENCE")==0) fscanf(outputFile, "%u %u\n", &process_number,&virtual_page_number);
+  printf("%s %u\n", command, process_number );
+}
 fclose(outputFile);
 //-----------------------------------------------------------
 
-  free(stringA);
 
 return 0;
 }

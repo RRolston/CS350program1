@@ -38,7 +38,7 @@ if(argc==5){
   PID_MAX = strtol(argv[4], &ptr, 10);
 }
 const unsigned int MAX_SIZE = strtol(argv[2], &ptr, 10);
-const unsigned int COMMAND_SIZE = strtol(argv[3], &ptr, 10);
+const unsigned long long int COMMAND_SIZE = strtol(argv[3], &ptr, 10);
 //int Pid[PID_MAX]={0};//process IDs 1 or 0 for running or not running
 int* Pid = (int*) malloc(sizeof(unsigned int)*PID_MAX);
 unsigned int j;
@@ -47,7 +47,7 @@ for (j = 0; j < PID_MAX; j++){
 }
 unsigned int* Address = (unsigned int*) malloc(sizeof(unsigned int)*PID_MAX);
 //unsigned int Address[PID_MAX];//address size of each process ID
-unsigned int command_count=0;
+unsigned long long int command_count=0;
 unsigned int processes=1;
 
 while(command_count<COMMAND_SIZE){
@@ -102,11 +102,11 @@ fclose(oFile);
 return 0;
 }
 void Start(unsigned int process_number,unsigned  int address_space_size, FILE* outputFile){
-  fprintf(outputFile, "START %d %d\n", process_number, address_space_size);
+  fprintf(outputFile, "START %u %u\n", process_number, address_space_size);
 }
 void Terminate(unsigned int process_number, FILE* outputFile){
-  fprintf(outputFile, "TERMINATE %d\n", process_number);
+  fprintf(outputFile, "TERMINATE %u\n", process_number);
 }
 void Reference(unsigned int process_number, unsigned int virtual_page_number, FILE* outputFile){
-  fprintf(outputFile, "REFERENCE %d %d\n", process_number,virtual_page_number);
+  fprintf(outputFile, "REFERENCE %u %u\n", process_number,virtual_page_number);
 }
