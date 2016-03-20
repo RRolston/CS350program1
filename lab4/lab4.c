@@ -34,8 +34,8 @@ char* stringA;
 FILE * oFile;
 oFile = fopen(argv[1],"w");
 int Pid[PID_MAX];//process IDs 1 or 0 for running or not running
-int address_space_size;
-int virtual_page_number;
+unsigned int address[PID_MAX];//address size of each process ID
+
 
 fclose(oFile);
 //-----------------------------------------------------------
