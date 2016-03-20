@@ -1,6 +1,6 @@
 //Raymond Rolston
-//CS375
-//due 3/18/16
+//CS350
+//due 3/21/16
 //Programming Assignment 1
 
 #include<stddef.h>
