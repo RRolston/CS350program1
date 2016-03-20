@@ -18,9 +18,9 @@ void Reference(int, int, FILE*);
 
 int main(int argc, char *argv[]) {
 //quick argument check-----------------------------------------
-  if(argc!=2){
+  if(argc!=4){
     fprintf(stderr,"Unacceptable number of arguments %d encountered.", argc);
-    fprintf(stderr," ./lab4  <input-file>");
+    fprintf(stderr," ./lab4  <input-file> <max-address-size> <number-of-commands>");
     exit(1);
   }
 //-----------------------------------------------------------
@@ -30,11 +30,30 @@ time_t t;
    srand((unsigned) time(&t));
 char* stringA;
 
-//Print format-----------------------------------------------
+//Print------------------------------------------------------
 FILE * oFile;
 oFile = fopen(argv[1],"w");
+char *ptr;
+const unsigned int MAX_SIZE = strtol(argv[2], &ptr, 10);
+const unsigned int COMMAND_SIZE = strtol(argv[3], &ptr, 10);
 int Pid[PID_MAX];//process IDs 1 or 0 for running or not running
 unsigned int address[PID_MAX];//address size of each process ID
+
+while(){
+
+  switch(){
+    case :
+      Start
+      break;
+    case :
+      Terminate
+      break;
+    case :
+      Reference
+      break;
+  }
+}
+
 
 
 fclose(oFile);
