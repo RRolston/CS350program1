@@ -2,6 +2,7 @@
 //CS350
 //due 3/21/16
 //Programming Assignment 1
+//Lab4
 
 #include<stddef.h>
 #include<stdlib.h>
@@ -11,16 +12,15 @@
 
 #define PID_MAX 32768//max on my personal system
 
-char* stringGen(const int len);
-void Start(int,int, FILE*);
-void Terminate(int, FILE*);
-void Reference(int, int, FILE*);
+void Start(unsigned int, unsigned int, FILE*);
+void Terminate(unsigned int, FILE*);
+void Reference(unsigned int, unsigned int, FILE*);
 
 int main(int argc, char *argv[]) {
 //quick argument check-----------------------------------------
   if(argc!=4){
     fprintf(stderr,"Unacceptable number of arguments %d encountered.", argc);
-    fprintf(stderr," ./lab4  <input-file> <max-address-size> <number-of-commands>");
+    fprintf(stderr," ./lab4  <input-file> <max-address-size(bits)> <number-of-commands>");
     exit(1);
   }
 //-----------------------------------------------------------
@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
 time_t t;
 /* Intializes random number generator */
    srand((unsigned) time(&t));
-char* stringA;
 
 //Print------------------------------------------------------
 FILE * oFile;
@@ -36,51 +35,66 @@ oFile = fopen(argv[1],"w");
 char *ptr;
 const unsigned int MAX_SIZE = strtol(argv[2], &ptr, 10);
 const unsigned int COMMAND_SIZE = strtol(argv[3], &ptr, 10);
-int Pid[PID_MAX];//process IDs 1 or 0 for running or not running
-unsigned int address[PID_MAX];//address size of each process ID
-/*
-while(){
+int Pid[PID_MAX]={0};//process IDs 1 or 0 for running or not running
+unsigned int Address[PID_MAX];//address size of each process ID
+unsigned int command_count=0;
+unsigned int processes=1;
 
-  switch(){
-    case :
-      Start
+while(command_count<COMMAND_SIZE){
+  unsigned int p_id= rand()%processes;
+  unsigned int address_size= (rand()%MAX_SIZE)+1;
+  int s=rand()%3;
+  switch(s){
+    case 0:
+      if(Pid[p_id]==0){
+        Pid[p_id]=1;
+        Address[p_id]=address_size;
+        Start(p_id,address_size,oFile);
+        if(processes<PID_MAX) processes++;
+        break;
+      }else{
+        unsigned int vpn = rand()%Address[p_id];
+        Reference(p_id,vpn,oFile);
+      }
+    case 1:
+    if(Pid[p_id]==0){
+      Pid[p_id]=1;
+      Address[p_id]=address_size;
+      Start(p_id,address_size,oFile);
+      if(processes<PID_MAX) processes++;
       break;
-    case :
-      Terminate
-      break;
-    case :
-      Reference
-      break;
+    }else{
+      unsigned int vpn = rand()%Address[p_id];
+      Reference(p_id,vpn,oFile);
+    }
+    case 2:
+      if(Pid[p_id]==0){
+        Pid[p_id]=1;
+        Address[p_id]=address_size;
+        Start(p_id,address_size,oFile);
+        break;
+      }else{
+        Pid[p_id]=0;
+        Terminate(p_id,oFile);
+        break;
+      }
   }
+  command_count++;
 }
 
-*/
 
 fclose(oFile);
 //-----------------------------------------------------------
 
-  free(stringA);
 
 return 0;
 }
-void Start(int process_number, int address_space_size, FILE* outputFile){
+void Start(unsigned int process_number,unsigned  int address_space_size, FILE* outputFile){
   fprintf(outputFile, "START %d %d\n", process_number, address_space_size);
 }
-void Terminate(int process_number, FILE* outputFile){
+void Terminate(unsigned int process_number, FILE* outputFile){
   fprintf(outputFile, "TERMINATE %d\n", process_number);
 }
-void Reference(int process_number, int virtual_page_number, FILE* outputFile){
+void Reference(unsigned int process_number, unsigned int virtual_page_number, FILE* outputFile){
   fprintf(outputFile, "REFERENCE %d %d\n", process_number,virtual_page_number);
-}
-char* stringGen( const int len) {
-
-    char* s = (char*)malloc(sizeof(int)*len);
-    static const char alphanum[] =     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    int i;
-    for (i = 0; i < len; ++i) {
-        s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
-    }
-
-    s[len] = 0;
-    return s;
 }

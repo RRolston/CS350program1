@@ -29,7 +29,7 @@ int process_number;
 int address_space_size;
 int virtual_page_number;
   fscanf(outputFile, "START %d %d\n", process_number, address_space_size);
-  fscanf(outputFile, "START %d\n", process_number, address_space_size);
+  fscanf(outputFile, " %d\n", process_number, address_space_size);
   fscanf(outputFile, "START %d %d\n", process_number,virtual_page_number);
 
 fclose(outputFile);
