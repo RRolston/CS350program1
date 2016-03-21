@@ -51,19 +51,23 @@ while(1){
   if(strcmp(command,"START")==0){
      fscanf(inputFile, "%d %u\n", &process_number, &address_space_size);
      for (j = 0; j < address_space_size; j++){
-       printf( "space left %u\n", space_left );
+
+
+      // printf( "space left %u\n", space_left );
        if(overflow){
+         address_space_size--;
          j=0;
          overflow=0;
+         if(address_space_size==0) break;
        }
        if(space_left==0){
-
+         //printf("fault @%d #%ld\n", j, page_faults+1);
          page_faults++;
 
        }else if(RAM[j]==-1){
          if(bool1true){
            BASE[process_number]=j;
-           //printf
+           //printf("%d\n", j);
            bool1true=0;
          }
          RAM[j] = process_number;
@@ -98,20 +102,20 @@ while(1){
        f=f-1;
      }
      int q=0;
-     for(i=0;i<virtual_page_number+1;){
+     for(i=0;i<virtual_page_number;){
        if(RAM[k]==process_number) i++;
-       if(i!=virtual_page_number+1) k++;
+       if(i!=virtual_page_number) k++;
        if(k==frames_of_memory) k=0;
        q=i;
        if(k==f) break;
      }
-     if(RAM[k]!=process_number || q!=virtual_page_number+1){
+     if(q!=virtual_page_number){
         page_faults++;
-        printf("%ld\n",page_faults );
+        //printf("%ld\n",page_faults );
      }
   }
   bool1true=1;
-  printf("%s %d\n", command, process_number );
+//  printf("%s %d\n", command, process_number );
 }
 
 printf("PAGE FAULTS: %ld\n", page_faults );
