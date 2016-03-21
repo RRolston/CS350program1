@@ -31,16 +31,18 @@ const unsigned int frames_of_memory = strtol(argv[1], &ptr, 10);
 unsigned long int page_faults=0;//no page replacement
 long int process_number;
 unsigned int address_space_size;
-long int RAM = (long int*) malloc(sizeof(unsigned int)*frames_of_memory);
+long int * RAM = (long int*) malloc(sizeof(unsigned int)*frames_of_memory);
+unsigned int * BASE = (unsigned int*) malloc(sizeof(unsigned int)*MAX_PID);
 unsigned int j;
 unsigned int i;
 for (j = 0; j < frames_of_memory; j++){
-  Pid[j] = -1;
+  RAM[j] = -1;
 }
 unsigned int space_left=frames_of_memory;
 unsigned int counter=0;
 unsigned int virtual_page_number;
 int z;//
+int bool1true=1;
 char command[10];
 while(1){
   z= fscanf(inputFile, "%s ",command);
@@ -49,6 +51,10 @@ while(1){
      fscanf(inputFile, "%ld %u\n", &process_number, &address_space_size);
      for (j = counter; j < address_space_size; j++){
        if(RAM[j]==-1){
+         if(bool1true){
+           BASE[process_number]=j;
+           bool1true=0;
+         }
          RAM[j] = process_number;
          space_left--;
        }else{
@@ -73,13 +79,34 @@ while(1){
       if(RAM[i]==process_number) RAM[i]=-1;
     }
   }
-  if(strcmp(command,"REFERENCE")==0) fscanf(inputFile, "%ld %u\n", &process_number,&virtual_page_number);
-  printf("%s %ld\n", command, process_number );
+  if(strcmp(command,"REFERENCE")==0){
+     fscanf(inputFile, "%ld %u\n", &process_number,&virtual_page_number);
+     int k=BASE[process_number];
+     int f=BASE[process_number];
+     if(f==0){
+        f=frames_of_memory-1;
+     }else{
+       f=f-1;
+     }
+     for(i=0;i<virtual_page_number+1;){
+       if(RAM[k]==process_number) i++;
+       if(i!=virtual_page_number+1) k++;
+       if(k==frames_of_memory) k=0;
+       if(k==f) break;
+     }
+     if(RAM[k]==-1 || i!=virtual_page_number+1) page_faults++;
+  }
+  counter=j;
+  //printf("%s %ld\n", command, process_number );
 }
+
 printf("PAGE FAULTS: %ld\n", page_faults );
+free(BASE);
+//free(RAM);
 fclose(inputFile);
+
 //-----------------------------------------------------------
 
 
-return 0;
+exit(0);
 }
