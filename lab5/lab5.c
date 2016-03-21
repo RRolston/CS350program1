@@ -43,16 +43,27 @@ unsigned int counter=0;
 unsigned int virtual_page_number;
 int z;//
 int bool1true=1;
+int overflow =0;
 char command[10];
 while(1){
   z= fscanf(inputFile, "%s ",command);
   if( z == EOF ) break;
   if(strcmp(command,"START")==0){
      fscanf(inputFile, "%d %u\n", &process_number, &address_space_size);
-     for (j = counter; j < address_space_size; j++){
-       if(RAM[j]==-1){
+     for (j = 0; j < address_space_size; j++){
+       printf( "space left %u\n", space_left );
+       if(overflow){
+         j=0;
+         overflow=0;
+       }
+       if(space_left==0){
+
+         page_faults++;
+
+       }else if(RAM[j]==-1){
          if(bool1true){
            BASE[process_number]=j;
+           //printf
            bool1true=0;
          }
          RAM[j] = process_number;
@@ -60,23 +71,21 @@ while(1){
        }else{
          address_space_size++;
        }
-       if(space_left==0){
-         for(i=0; i<frames_of_memory;i++){
-           if(RAM[i]==process_number) RAM[i]=-1;
-         }
-         page_faults++;
-         break;
-       }
        if((j+1)==frames_of_memory){
          address_space_size=address_space_size-j;
-         j=-1;
+         j=0;
+         overflow=1;
        }
      }
+    //counter=j;
   }
   if(strcmp(command,"TERMINATE")==0){
     fscanf(inputFile, "%d\n", &process_number);
     for(i=0; i<frames_of_memory;i++){
-      if(RAM[i]==process_number) RAM[i]=-1;
+      if(RAM[i]==process_number){
+        RAM[i]=-1;
+        space_left++;
+      }
     }
   }
   if(strcmp(command,"REFERENCE")==0){
@@ -88,16 +97,21 @@ while(1){
      }else{
        f=f-1;
      }
+     int q=0;
      for(i=0;i<virtual_page_number+1;){
        if(RAM[k]==process_number) i++;
        if(i!=virtual_page_number+1) k++;
        if(k==frames_of_memory) k=0;
+       q=i;
        if(k==f) break;
      }
-     if(RAM[k]==-1 || i!=virtual_page_number+1) page_faults++;
+     if(RAM[k]!=process_number || q!=virtual_page_number+1){
+        page_faults++;
+        printf("%ld\n",page_faults );
+     }
   }
-  counter=j;
-  //printf("%s %ld\n", command, process_number );
+  bool1true=1;
+  printf("%s %d\n", command, process_number );
 }
 
 printf("PAGE FAULTS: %ld\n", page_faults );
