@@ -1,13 +1,19 @@
-//Raymond Rolston
+//Raymond Rolston, Joe Kim, Cameron Parlman
 //CS350
 //due 3/21/16
 //Programming Assignment 1
 //Lab4
+/*SUMMARY:
+-takes max table size, number of commands wished to generate, and an optional max processes as input
+-randomly generates commands based on number of processes implemented
+-will be useful for finding averages over a large use of different processes
+*/
 
 #include<stddef.h>
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
+#include <assert.h>
 #include<time.h>
 
 #define MAX_PID 32768//max on my personal system
@@ -20,7 +26,7 @@ int main(int argc, char *argv[]) {
 //quick argument check-----------------------------------------
   if(argc!=4 && argc!=5){
     fprintf(stderr,"Unacceptable number of arguments %d encountered.", argc);
-    fprintf(stderr," ./lab4  <input-file> <max-address-size(bits)> <number-of-commands> <max-processes(optional)>");
+    fprintf(stderr," ./lab4  <input-file> <max-address-size> <number-of-commands> <max-processes(optional)>");
     exit(1);
   }
 //-----------------------------------------------------------
@@ -29,7 +35,7 @@ time_t t;
 /* Intializes random number generator */
    srand((unsigned) time(&t));
 
-//Print------------------------------------------------------
+//Variables------------------------------------------------------
 FILE * oFile;
 oFile = fopen(argv[1],"w");
 char *ptr;
@@ -47,6 +53,7 @@ for (j = 0; j < PID_MAX; j++){
   Pid[j] = 0;
 }
 unsigned int* Address = (unsigned int*) malloc(sizeof(unsigned int)*PID_MAX);
+assert(Address);
 //unsigned int Address[PID_MAX];//address size of each process ID
 unsigned long long int command_count=0;
 unsigned int processes=1;
@@ -72,19 +79,19 @@ while(command_count<COMMAND_SIZE){
       if(Pid[p_id]==0){
         Pid[p_id]=1;
         Address[p_id]=address_size;
-        Start(p_id,address_size,oFile);
+        Start(p_id,address_size,oFile);//print to file
         if(processes<PID_MAX) processes++;
         break;
       }else{
         unsigned int vpn = rand()%Address[p_id];
-        Reference(p_id,vpn,oFile);
+        Reference(p_id,vpn,oFile);//print to file
         break;
       }
     case 2:
       if(Pid[p_id]==0){
         Pid[p_id]=1;
         Address[p_id]=address_size;
-        Start(p_id,address_size,oFile);
+        Start(p_id,address_size,oFile);//print to file
         break;
       }else{
         Pid[p_id]=0;

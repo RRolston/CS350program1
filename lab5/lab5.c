@@ -1,15 +1,22 @@
-//Raymond Rolston
+//Raymond Rolston, Joe Kim, Cameron Parlman
 //CS350
 //due 3/21/16
 //Programming Assignment 1
+//lab5
+/*SUMMARY:
+-does not implement page replacement
+-ignores page faults (just counts them)
+-worst case order(frames-of-memory) for each command
+*/
 
 #include<stddef.h>
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
+#include <assert.h>
 #include<time.h>
 
-#define MAX_PID 32768//max on my personal system
+#define MAX_PID 32768//max process id name on my personal system
 
 int main(int argc, char *argv[]) {
 
@@ -19,58 +26,54 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-time_t t;
-/* Intializes random number generator */
-   srand((unsigned) time(&t));
 
-//Print format-----------------------------------------------
+
+//Variables------------------------------------------------
 FILE * inputFile;
 inputFile = fopen(argv[2],"r");
-char *ptr;
+char *ptr;//used for strtol
 const unsigned int frames_of_memory = strtol(argv[1], &ptr, 10);
 unsigned long int page_faults=0;//no page replacement
 int process_number;
 unsigned int address_space_size;
- int * RAM = ( int*) malloc(sizeof(unsigned int)*frames_of_memory);
-unsigned int * BASE = (unsigned int*) malloc(sizeof(unsigned int)*MAX_PID);
-unsigned int j;
+int * RAM = ( int*) malloc(sizeof(unsigned int)*frames_of_memory);//simulated memory not actually RAM
+assert(RAM);
+unsigned int * BASE = (unsigned int*) malloc(sizeof(unsigned int)*MAX_PID);//stores first location of process in memory used to make references
+assert(BASE);
+unsigned int j;//iterators
 unsigned int i;
 for (j = 0; j < frames_of_memory; j++){
-  RAM[j] = -1;
+  RAM[j] = -1;//-1 means empty
 }
 
 long int space_left=frames_of_memory-1;
-//unsigned int counter=0;
 unsigned int virtual_page_number;
-int z;//
-int bool1true=1;
-int overflow =0;
-char command[10];
+int z;//checks result of fscanf
+int first=1;//used to identify first allocation of a process within our table
+int overflow =0;//used to identify overflow in a loop using unsigned int as we cannot use negative numbers
+char command[10];//stores first string of line
 while(1){
   z= fscanf(inputFile, "%s ",command);
   if( z == EOF ) break;
+
+//START-----------------------------------------------------
+
   if(strcmp(command,"START")==0){
      fscanf(inputFile, "%d %u\n", &process_number, &address_space_size);
-
      for (j = 0; j < address_space_size; j++){
-
-
-       //printf( "address space %u\n", address_space_size );
        if(overflow){
          address_space_size--;
          j=0;
          overflow=0;
-         //if(address_space_size==0) break;
        }
        if(space_left==-1){
-         //printf("fault @%d #%ld\n", j, page_faults+1);
          page_faults++;
+         //printf("%s : %d : %ld\n",command, process_number, page_faults );
 
        }else if(RAM[j]==-1){
-         if(bool1true){
+         if(first){
            BASE[process_number]=j;
-          // printf("%d\n", j);
-           bool1true=0;
+           first=0;
          }
          RAM[j] = process_number;
          space_left--;
@@ -83,10 +86,12 @@ while(1){
          overflow=1;
        }
      }
-     overflow=0;
-     
-    //counter=j;
+     first=1;//reset
+     overflow=0;//reset
   }
+
+//TERMINATE-------------------------------------------------
+
   if(strcmp(command,"TERMINATE")==0){
     fscanf(inputFile, "%d\n", &process_number);
     for(i=0; i<frames_of_memory;i++){
@@ -96,6 +101,9 @@ while(1){
       }
     }
   }
+
+//REFERENCE-------------------------------------------------
+
   if(strcmp(command,"REFERENCE")==0){
      fscanf(inputFile, "%d %u\n", &process_number,&virtual_page_number);
      int k=BASE[process_number];
@@ -105,8 +113,10 @@ while(1){
      }else{
        f=f-1;
      }
-     //int q=0;
-     for(i=0;i<virtual_page_number;){
+
+     i=0;
+     while(i<virtual_page_number){
+       //printf("%d : %d: %d\n",i ,k, f);
        if(RAM[k]==process_number) i++;
        if(i<virtual_page_number){
           k++;
@@ -115,23 +125,21 @@ while(1){
        }
        if(k==f) break;
        if(k==frames_of_memory) k=0;
-      // q=i;
+       if(k==f) break;
      }
-    // printf("RAM[%u] = %u @ %u\n",k,RAM[k],process_number );
      if(k==frames_of_memory){
        if(RAM[0]!=process_number){
          page_faults++;
-         //printf("%ld\n",page_faults );
+         //printf("%s : %d : %ld\n",command, process_number, page_faults );
        }
      }else{
         if(RAM[k]!=process_number){
           page_faults++;
-          //printf("%ld\n",page_faults );
+          //printf("%s : %d : %ld\n",command, process_number, page_faults );
         }
      }
   }
-  bool1true=1;
-//  printf("%s %d\n", command, process_number );
+
 }
 
 printf("PAGE FAULTS: %ld\n", page_faults );
