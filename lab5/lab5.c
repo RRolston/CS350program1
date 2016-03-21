@@ -29,9 +29,9 @@ inputFile = fopen(argv[2],"r");
 char *ptr;
 const unsigned int frames_of_memory = strtol(argv[1], &ptr, 10);
 unsigned long int page_faults=0;//no page replacement
-long int process_number;
+int process_number;
 unsigned int address_space_size;
-long int * RAM = (long int*) malloc(sizeof(unsigned int)*frames_of_memory);
+ int * RAM = ( int*) malloc(sizeof(unsigned int)*frames_of_memory);
 unsigned int * BASE = (unsigned int*) malloc(sizeof(unsigned int)*MAX_PID);
 unsigned int j;
 unsigned int i;
@@ -48,7 +48,7 @@ while(1){
   z= fscanf(inputFile, "%s ",command);
   if( z == EOF ) break;
   if(strcmp(command,"START")==0){
-     fscanf(inputFile, "%ld %u\n", &process_number, &address_space_size);
+     fscanf(inputFile, "%d %u\n", &process_number, &address_space_size);
      for (j = counter; j < address_space_size; j++){
        if(RAM[j]==-1){
          if(bool1true){
@@ -74,13 +74,13 @@ while(1){
      }
   }
   if(strcmp(command,"TERMINATE")==0){
-    fscanf(inputFile, "%ld\n", &process_number);
+    fscanf(inputFile, "%d\n", &process_number);
     for(i=0; i<frames_of_memory;i++){
       if(RAM[i]==process_number) RAM[i]=-1;
     }
   }
   if(strcmp(command,"REFERENCE")==0){
-     fscanf(inputFile, "%ld %u\n", &process_number,&virtual_page_number);
+     fscanf(inputFile, "%d %u\n", &process_number,&virtual_page_number);
      int k=BASE[process_number];
      int f=BASE[process_number];
      if(f==0){
@@ -102,7 +102,7 @@ while(1){
 
 printf("PAGE FAULTS: %ld\n", page_faults );
 free(BASE);
-//free(RAM);
+free(RAM);
 fclose(inputFile);
 
 //-----------------------------------------------------------
