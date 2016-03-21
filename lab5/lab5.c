@@ -39,7 +39,7 @@ for (j = 0; j < frames_of_memory; j++){
   RAM[j] = -1;
 }
 unsigned int space_left=frames_of_memory;
-unsigned int counter=0;
+//unsigned int counter=0;
 unsigned int virtual_page_number;
 int z;//
 int bool1true=1;
@@ -104,12 +104,12 @@ while(1){
      int q=0;
      for(i=0;i<virtual_page_number;){
        if(RAM[k]==process_number) i++;
+       if(k==f) break;
        if(i!=virtual_page_number) k++;
        if(k==frames_of_memory) k=0;
        q=i;
-       if(k==f) break;
      }
-     if(q!=virtual_page_number){
+     if(RAM[k+1]!=process_number||q!=virtual_page_number){
         page_faults++;
         //printf("%ld\n",page_faults );
      }
