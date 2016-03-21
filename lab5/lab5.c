@@ -23,8 +23,8 @@ time_t t;
    srand((unsigned) time(&t));
 
 //Print format-----------------------------------------------
-FILE * outputFile;
-outputFile = fopen(argv[2],"r");
+FILE * inputFile;
+inputFile = fopen(argv[2],"r");
 char *ptr;
 const unsigned int frames_of_memory = strtol(argv[1], &ptr, 10);
 unsigned long int FIFO_page_faults=0;
@@ -34,14 +34,14 @@ unsigned int virtual_page_number;
 int z;//
 char command[10];
 while(1){
-  z= fscanf(outputFile, "%s ",command);
+  z= fscanf(inputFile, "%s ",command);
   if( z == EOF ) break;
-  if(strcmp(command,"START")==0) fscanf(outputFile, "%u %u\n", &process_number, &address_space_size);
-  if(strcmp(command,"TERMINATE")==0) fscanf(outputFile, "%u\n", &process_number);
-  if(strcmp(command,"REFERENCE")==0) fscanf(outputFile, "%u %u\n", &process_number,&virtual_page_number);
+  if(strcmp(command,"START")==0) fscanf(inputFile, "%u %u\n", &process_number, &address_space_size);
+  if(strcmp(command,"TERMINATE")==0) fscanf(inputFile, "%u\n", &process_number);
+  if(strcmp(command,"REFERENCE")==0) fscanf(inputFile, "%u %u\n", &process_number,&virtual_page_number);
   printf("%s %u\n", command, process_number );
 }
-fclose(outputFile);
+fclose(inputFile);
 //-----------------------------------------------------------
 
 

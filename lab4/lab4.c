@@ -10,7 +10,7 @@
 #include<string.h>
 #include<time.h>
 
-//#define PID_MAX 32768//max on my personal system
+#define MAX_PID 32768//max on my personal system
 
 void Start(unsigned int, unsigned int, FILE*);
 void Terminate(unsigned int, FILE*);
@@ -33,10 +33,11 @@ time_t t;
 FILE * oFile;
 oFile = fopen(argv[1],"w");
 char *ptr;
-unsigned int PID_MAX=32768;//max on my personal system
+unsigned int PID_MAX=MAX_PID;//max on my personal system
 if(argc==5){
   PID_MAX = strtol(argv[4], &ptr, 10);
 }
+if(PID_MAX>MAX_PID) PID_MAX=MAX_PID;
 const unsigned int MAX_SIZE = strtol(argv[2], &ptr, 10);
 const unsigned long long int COMMAND_SIZE = strtol(argv[3], &ptr, 10);
 //int Pid[PID_MAX]={0};//process IDs 1 or 0 for running or not running
