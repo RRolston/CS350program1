@@ -38,7 +38,8 @@ unsigned int i;
 for (j = 0; j < frames_of_memory; j++){
   RAM[j] = -1;
 }
-unsigned int space_left=frames_of_memory;
+
+long int space_left=frames_of_memory-1;
 //unsigned int counter=0;
 unsigned int virtual_page_number;
 int z;//
@@ -50,24 +51,25 @@ while(1){
   if( z == EOF ) break;
   if(strcmp(command,"START")==0){
      fscanf(inputFile, "%d %u\n", &process_number, &address_space_size);
+
      for (j = 0; j < address_space_size; j++){
 
 
-      // printf( "space left %u\n", space_left );
+       //printf( "address space %u\n", address_space_size );
        if(overflow){
          address_space_size--;
          j=0;
          overflow=0;
-         if(address_space_size==0) break;
+         //if(address_space_size==0) break;
        }
-       if(space_left==0){
+       if(space_left==-1){
          //printf("fault @%d #%ld\n", j, page_faults+1);
          page_faults++;
 
        }else if(RAM[j]==-1){
          if(bool1true){
            BASE[process_number]=j;
-           //printf("%d\n", j);
+          // printf("%d\n", j);
            bool1true=0;
          }
          RAM[j] = process_number;
@@ -81,6 +83,8 @@ while(1){
          overflow=1;
        }
      }
+     overflow=0;
+     
     //counter=j;
   }
   if(strcmp(command,"TERMINATE")==0){
@@ -97,21 +101,33 @@ while(1){
      int k=BASE[process_number];
      int f=BASE[process_number];
      if(f==0){
-        f=frames_of_memory-1;
+        f=frames_of_memory;
      }else{
        f=f-1;
      }
-     int q=0;
+     //int q=0;
      for(i=0;i<virtual_page_number;){
        if(RAM[k]==process_number) i++;
+       if(i<virtual_page_number){
+          k++;
+       }else{
+         break;
+       }
        if(k==f) break;
-       if(i!=virtual_page_number) k++;
        if(k==frames_of_memory) k=0;
-       q=i;
+      // q=i;
      }
-     if(RAM[k+1]!=process_number||q!=virtual_page_number){
-        page_faults++;
-        //printf("%ld\n",page_faults );
+    // printf("RAM[%u] = %u @ %u\n",k,RAM[k],process_number );
+     if(k==frames_of_memory){
+       if(RAM[0]!=process_number){
+         page_faults++;
+         //printf("%ld\n",page_faults );
+       }
+     }else{
+        if(RAM[k]!=process_number){
+          page_faults++;
+          //printf("%ld\n",page_faults );
+        }
      }
   }
   bool1true=1;
