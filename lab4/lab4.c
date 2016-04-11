@@ -101,8 +101,15 @@ while(command_count<COMMAND_SIZE){
   }
   command_count++;
 }
-
-
+//new code to terminate all processes on exit as requested by lab 4 new requirements
+int j;
+for(j=0; j<processes; j++){
+  if(Pid[j]!=0){
+    Pid[j]=0;
+    Terminate(j,oFile);
+  }
+}
+//end new code
 fclose(oFile);
 //-----------------------------------------------------------
 
